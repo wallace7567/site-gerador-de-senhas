@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerador de Senha por E-mail</title>
+    <title>Gerador de Senha Premium</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
     <div class="container">
-        <h2>Gerador de Senha Exclusiva</h2>
-        <p>Digite seu e-mail para gerar sua senha de 6 dígitos.</p>
+        <h2>PASSWORD GENERATOR</h2>
+        <p>Digite seu e-mail para revelar sua combinação criptográfica.</p>
         
         <div class="input-group">
             <input type="email" id="emailInput" placeholder="seu-email@exemplo.com" required>
-            <button onclick="gerarSenhaPorEmail()">Gerar Senha</button>
+            <button onclick="gerarSenhaPorEmail()">Gerar Senha Segura</button>
         </div>
 
         <div class="slots-container">
@@ -28,7 +28,6 @@
     </div>
 
     <script>
-        // Função matemática simples para transformar o e-mail em um número (Hash)
         function cyrb128(str) {
             let h1 = 1779033703, h2 = 3024733165, h3 = 3362453659, h4 = 502493848;
             for (let i = 0, k; i < str.length; i++) {
@@ -45,7 +44,6 @@
             return [(h1^h2^h3^h4)>>>0, (h2^h1)>>>0, (h3^h1)>>>0, (h4^h1)>>>0];
         }
 
-        // Gerador de números pseudo-aleatórios baseado no hash do e-mail (Seed)
         function sfc32(a, b, c, d) {
             return function() {
                 a >>>= 0; b >>>= 0; c >>>= 0; d >>>= 0;
@@ -68,7 +66,6 @@
                 return;
             }
 
-            // Inicializa o gerador usando o e-mail como semente (seed)
             const seed = cyrb128(email);
             const rand = sfc32(seed[0], seed[1], seed[2], seed[3]);
 
@@ -78,36 +75,28 @@
 
             let senha = [];
 
-            // 1. Garante os requisitos obrigatórios primeiro
-            // 2 Letras Maiúsculas
             for (let i = 0; i < 2; i++) {
                 const idx = Math.floor(rand() * letrasMaiusculas.length);
                 senha.push(letrasMaiusculas[idx]);
             }
-            // 3 Números
             for (let i = 0; i < 3; i++) {
                 const idx = Math.floor(rand() * numeros.length);
                 senha.push(numeros[idx]);
             }
-            // 2. O último caractere (6º) pode ser qualquer um
             const idxDisponivel = Math.floor(rand() * todosCaracteres.length);
             senha.push(todosCaracteres[idxDisponivel]);
 
-            // 3. Embaralha a senha de forma consistente usando o mesmo gerador rand()
-            // Isso garante que a ordem das caixinhas também mude de e-mail para e-mail
             for (let i = senha.length - 1; i > 0; i--) {
                 const j = Math.floor(rand() * (i + 1));
                 [senha[i], senha[j]] = [senha[j], senha[i]];
             }
 
-            // 4. Exibe o resultado nas caixinhas (slots)
             const slots = document.querySelectorAll('.slot');
             slots.forEach((slot, index) => {
                 slot.textContent = senha[index];
-                // Adiciona uma animação simples de aparecer
                 slot.style.animation = 'none';
-                slot.offsetHeight; // Truque para reiniciar animação
-                slot.style.animation = 'popIn 0.3s ease forwards';
+                slot.offsetHeight; 
+                slot.style.animation = 'popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards';
             });
         }
     </script>
