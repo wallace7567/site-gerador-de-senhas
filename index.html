@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerador de Senha Premium</title>
+    <title>Gerador de Senha Profissional</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
     <div class="container">
-        <h2>PASSWORD GENERATOR</h2>
-        <p>Digite seu e-mail para revelar sua combinação criptográfica.</p>
+        <h2>Deterministic Key</h2>
+        <p>Gere uma combinação de segurança única a partir do seu endereço de e-mail.</p>
         
         <div class="input-group">
-            <input type="email" id="emailInput" placeholder="seu-email@exemplo.com" required>
-            <button onclick="gerarSenhaPorEmail()">Gerar Senha Segura</button>
+            <input type="email" id="emailInput" placeholder="Digite seu e-mail corporativo ou pessoal" required>
+            <button onclick="gerarSenhaPorEmail()">Gerar Chave de Acesso</button>
         </div>
 
         <div class="slots-container">
@@ -28,6 +28,7 @@
     </div>
 
     <script>
+        // Funções matemáticas para transformar o e-mail em uma senha fixa (Determinística)
         function cyrb128(str) {
             let h1 = 1779033703, h2 = 3024733165, h3 = 3362453659, h4 = 502493848;
             for (let i = 0, k; i < str.length; i++) {
@@ -75,28 +76,30 @@
 
             let senha = [];
 
+            // 2 Letras Maiúsculas obrigatórias
             for (let i = 0; i < 2; i++) {
-                const idx = Math.floor(rand() * letrasMaiusculas.length);
-                senha.push(letrasMaiusculas[idx]);
+                senha.push(letrasMaiusculas[Math.floor(rand() * letrasMaiusculas.length)]);
             }
+            // 3 Números obrigatórios
             for (let i = 0; i < 3; i++) {
-                const idx = Math.floor(rand() * numeros.length);
-                senha.push(numeros[idx]);
+                senha.push(numeros[Math.floor(rand() * numeros.length)]);
             }
-            const idxDisponivel = Math.floor(rand() * todosCaracteres.length);
-            senha.push(todosCaracteres[idxDisponivel]);
+            // Última vaga aleatória
+            senha.push(todosCaracteres[Math.floor(rand() * todosCaracteres.length)]);
 
+            // Embaralha as posições de forma constante com base no e-mail
             for (let i = senha.length - 1; i > 0; i--) {
                 const j = Math.floor(rand() * (i + 1));
                 [senha[i], senha[j]] = [senha[j], senha[i]];
             }
 
+            // Exibe nos quadrados e adiciona o efeito visual profissional
             const slots = document.querySelectorAll('.slot');
             slots.forEach((slot, index) => {
                 slot.textContent = senha[index];
-                slot.style.animation = 'none';
-                slot.offsetHeight; 
-                slot.style.animation = 'popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards';
+                slot.classList.remove('active');
+                void slot.offsetWidth; // Força reinicialização da animação
+                slot.classList.add('active');
             });
         }
     </script>
