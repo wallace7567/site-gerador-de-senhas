@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Senha por E-mail</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <div class="container">
+        <h2>Gerador de Senha Exclusiva</h2>
+        <p>Digite seu e-mail para gerar sua senha de 6 dígitos.</p>
+        
+        <div class="input-group">
+            <input type="email" id="emailInput" placeholder="seu-email@exemplo.com" required>
+            <button onclick="gerarSenhaPorEmail()">Gerar Senha</button>
+        </div>
+
+        <div class="slots-container">
+            <div class="slot">-</div>
+            <div class="slot">-</div>
+            <div class="slot">-</div>
+            <div class="slot">-</div>
+            <div class="slot">-</div>
+            <div class="slot">-</div>
+        </div>
+    </div>
+
+    <script>
+        // Função matemática simples para transformar o e-mail em um número (Hash)
+        function cyrb128(str) {
+            let h1 = 1779033703, h2 = 3024733165, h3 = 3362453659, h4 = 502493848;
+            for (let i = 0, k; i < str.length; i++) {
+                k = str.charCodeAt(i);
+                h1 = h2 ^ Math.imul(h1 ^ k, 597399067);
+                h2 = h3 ^ Math.imul(h2 ^ k, 2869860233);
+                h3 = h4 ^ Math.imul(h3 ^ k, 951274213);
+                h4 = h1 ^ Math.imul(h4 ^ k, 2716044179);
+            }
+            h1 = Math.imul(h3 ^ (h1 >>> 18), 597399067);
+            h2 = Math.imul(h4 ^ (h2 >>> 22), 2869860233);
+            h3 = Math.imul(h1 ^ (h3 >>> 17), 951274213);
+            h4 = Math.imul(h2 ^ (h4 >>> 19), 2716044179);
+            return [(h1^h2^h3^h4)>>>0, (h2^h1)>>>0, (h3^h1)>>>0, (h4^h1)>>>0];
+        }
+
+        // Gerador de números pseudo-aleatórios baseado no hash do e-mail (Seed)
+        function sfc32(a, b, c, d) {
+            return function() {
+                a >>>= 0; b >>>= 0; c >>>= 0; d >>>= 0;
+                var t = (a + b) | 0;
+                a = b ^ (b >>> 9);
+                b = (c + (c << 3)) | 0;
+                c = (c << 21) | (c >>> 11);
+                d = (d + 1) | 0;
+                t = (t + d) | 0;
+                c = (c + t) | 0;
+                return (t >>> 0) / 4294967296;
+            }
+        }
+
+        function gerarSenhaPorEmail() {
+            const email = document.getElementById('emailInput').value.trim().toLowerCase();
+            
+            if (!email) {
+                alert("Por favor, digite um e-mail válido.");
+                return;
+            }
+
+            // Inicializa o gerador usando o e-mail como semente (seed)
+            const seed = cyrb128(email);
+            const rand = sfc32(seed[0], seed[1], seed[2], seed[3]);
+
+            const letrasMaiusculas = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            const numeros = "0123456789";
+            const todosCaracteres = letrasMaiusculas + numeros;
+
+            let senha = [];
+
+            // 1. Garante os requisitos obrigatórios primeiro
+            // 2 Letras Maiúsculas
+            for (let i = 0; i < 2; i++) {
+                const idx = Math.floor(rand() * letrasMaiusculas.length);
+                senha.push(letrasMaiusculas[idx]);
+            }
+            // 3 Números
+            for (let i = 0; i < 3; i++) {
+                const idx = Math.floor(rand() * numeros.length);
+                senha.push(numeros[idx]);
+            }
+            // 2. O último caractere (6º) pode ser qualquer um
+            const idxDisponivel = Math.floor(rand() * todosCaracteres.length);
+            senha.push(todosCaracteres[idxDisponivel]);
+
+            // 3. Embaralha a senha de forma consistente usando o mesmo gerador rand()
+            // Isso garante que a ordem das caixinhas também mude de e-mail para e-mail
+            for (let i = senha.length - 1; i > 0; i--) {
+                const j = Math.floor(rand() * (i + 1));
+                [senha[i], senha[j]] = [senha[j], senha[i]];
+            }
+
+            // 4. Exibe o resultado nas caixinhas (slots)
+            const slots = document.querySelectorAll('.slot');
+            slots.forEach((slot, index) => {
+                slot.textContent = senha[index];
+                // Adiciona uma animação simples de aparecer
+                slot.style.animation = 'none';
+                slot.offsetHeight; // Truque para reiniciar animação
+                slot.style.animation = 'popIn 0.3s ease forwards';
+            });
+        }
+    </script>
+</body>
+</html>
