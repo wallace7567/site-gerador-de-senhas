@@ -1,41 +1,65 @@
+html, body{
+    height:100%;
+    margin:0;
 }
 
-/* CONTAINER DOS QUADRADOS DA SENHA (PERFEITO E ALINHADO) */
-.slots-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 12px;
-    width: 100%;
+body{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    background:linear-gradient(135deg, #020024, #001845, #003566);
+    font-family:Arial, sans-serif;
 }
 
-/* OS QUADRADOS DE SENHA PROFISSIONAIS */
-.slot {
-    width: 56px;
-    height: 64px;
-    background: rgba(31, 41, 55, 0.4);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 14px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 24px;
-    font-weight: 700;
-    color: #a855f7;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+.container{
+    text-align:center;
+    color:white;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:15px;
 }
 
-/* Estado ativo quando a senha é gerada */
-.slot.active {
-    border-color: #a855f7;
-    background: rgba(168, 85, 247, 0.05);
-    text-shadow: 0 0 12px rgba(168, 85, 247, 0.4);
-    animation: reveal 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+h1{
+    margin-bottom:10px;
 }
 
-/* Animação suave de surgimento */
-@keyframes reveal {
-    0% { transform: scale(0.9); opacity: 0; }
-    100% { transform: scale(1); opacity: 1; }
+input{
+    width:280px;
+    padding:12px;
+    border:none;
+    border-radius:10px;
+    font-size:16px;
+    outline:none;
+}
+
+button{
+    padding:12px 20px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    font-weight:bold;
+    background:white;
+    color:#001845;
+}
+
+.senha{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    margin-top:15px;
+}
+
+.caixa{
+    width:55px;
+    height:55px;
+    background:white;
+    color:black;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    border-radius:10px;
+    font-size:22px;
+    font-weight:bold;
 }
